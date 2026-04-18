@@ -1,0 +1,450 @@
+/* Buttons */
+.btn {
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: var(--bg-deep);
+}
+
+.btn-danger {
+    background: var(--danger-gradient);
+    color: white;
+}
+
+.icon-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+}
+
+/* Forms */
+.input-group {
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 12px 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-group i {
+    color: var(--text-dim);
+}
+
+.input-group input {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    width: 100%;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Health Score Card */
+.score-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.score-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.trend {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.trend.up { background: rgba(0, 245, 160, 0.15); color: var(--success); }
+.trend.down { background: rgba(255, 75, 43, 0.15); color: var(--danger); }
+
+.score-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.circular-progress-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.circular-progress-container svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-progress-container circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.circular-progress-container circle.bg {
+    stroke: rgba(255, 255, 255, 0.05);
+}
+
+.circular-progress-container circle.fg {
+    stroke: var(--primary);
+    stroke-dasharray: 283;
+    stroke-dashoffset: 50; /* Dynamically set */
+    transition: stroke-dashoffset 1s ease;
+}
+
+.score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.score-value span {
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.score-value label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.score-message p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Insight Cards */
+.insight-card {
+    padding: 16px;
+    border-radius: 18px;
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.insight-card.warning {
+    background: rgba(249, 212, 35, 0.1);
+    border-left: 4px solid var(--warning);
+}
+
+.insight-card.risk {
+    background: rgba(255, 75, 43, 0.1);
+    border-left: 4px solid var(--danger);
+}
+
+.insight-icon {
+    font-size: 20px;
+}
+
+.insight-info h4 {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.insight-info p {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* Progress Bar */
+.progress-section .section-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: var(--bg-surface);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* Medicine Cards */
+.horizontal-scroller {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+}
+
+.horizontal-scroller::-webkit-scrollbar { display: none; }
+
+.med-card-small {
+    min-width: 140px;
+    padding: 18px;
+    text-align: center;
+}
+
+.med-card-small .time {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.med-card-small .name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.take-btn {
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.take-btn.done {
+    background: var(--success);
+    border-color: var(--success);
+    color: var(--bg-deep);
+}
+
+/* Stats Card */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.stat-card {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.stat-icon.hr { background: rgba(255, 65, 108, 0.1); color: var(--danger); }
+.stat-icon.steps { background: rgba(0, 242, 254, 0.1); color: var(--primary); }
+
+.stat-info label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.stat-info .value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Gamification */
+.gamification-card {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.streak-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fire-icon {
+    font-size: 24px;
+    color: #ff9d00;
+    filter: drop-shadow(0 0 5px rgba(255, 157, 0, 0.5));
+}
+
+.streak-info span {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.streak-info label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.badge-showcase {
+    display: flex;
+    gap: 8px;
+}
+
+.badge-item {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    color: var(--text-dim);
+    font-size: 16px;
+}
+
+.badge-item.earned {
+    background: var(--primary-gradient);
+    color: var(--bg-deep);
+}
+
+/* Modals */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal {
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    animation: slideUp 0.3s ease;
+}
+
+.modal.full-screen {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 { font-size: 20px; }
+.close-modal { background: none; border: none; color: white; font-size: 20px; }
+
+/* AI Chat */
+.chat-container {
+    height: calc(100% - 180px);
+    overflow-y: auto;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message { display: flex; max-width: 85%; }
+.message.ai { align-self: flex-start; }
+.message.user { align-self: flex-end; }
+
+.message .bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+}
+
+.message.ai .bubble {
+    background: var(--bg-surface);
+    border-bottom-left-radius: 4px;
+}
+
+.message.user .bubble {
+    background: var(--primary);
+    color: var(--bg-deep);
+    border-bottom-right-radius: 4px;
+}
+
+.chat-input-area {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    right: 20px;
+    background: var(--bg-surface);
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area input {
+    background: none;
+    border: none;
+    outline: none;
+    color: white;
+    padding-left: 15px;
+    flex: 1;
+}
+
+.chat-input-area button {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary);
+    border: none;
+    color: var(--bg-deep);
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CareMate AI | Smart Preventive Healthcare</title>
+    <meta name="description" content="AI-powered preventive healthcare assistant tracking medicines, monitoring health data, and predicting risks.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body class="dark-theme">
+    <div id="app">
+        <!-- Auth Screen -->
+        <section id="auth-screen" class="screen active">
+            <div class="auth-container">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                    <h1>CareMate<span>AI</span></h1>
+                </div>
+                <div id="login-form-container" class="auth-card">
+                    <h2>Welcome Back</h2>
+                    <p>Continue your health journey</p>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </form>
+                    <p class="auth-footer">Don't have an account? <a href="#" id="go-to-signup">Sign Up</a></p>
+                </div>
+                <div id="signup-form-container" class="auth-card hidden">
+                    <h2>Join CareMate</h2>
+                    <p>Start monitoring with AI</p>
+                    <form id="signup-form">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="signup-name" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="signup-email" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="signup-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </form>
+                    <p class="auth-footer">Already have an account? <a href="#" id="go-to-login">Sign In</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main App Layout -->
+        <main id="main-layout" class="hidden">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="user-profile">
+                    <div class="avatar">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nitin" alt="User">
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="user-info">
+                        <p class="greeting">Hello, <span id="user-display-name">Nitin</span></p>
+                        <p class="date" id="current-date">Sunday, 19 April</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="emergency-trigger"><i class="fas fa-phone-alt"></i></button>
+                    <button class="icon-btn" id="notifications-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                </div>
+            </header>
+
+            <!-- Screens Container -->
+            <div id="screens-viewport">
+                <!-- Home Dashboard -->
+                <section id="home-screen" class="screen view-active">
+                    <div class="scroll-content">
+                        <!-- Health Score Card -->
+                        <div class="score-card glass">
+                            <div class="score-header">
+                                <h3>Health Score</h3>
+                                <div class="trend up"><i class="fas fa-caret-up"></i> 8%</div>
+                            </div>
+                            <div class="score-content">
+                                <div class="circular-progress-container">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="45" class="bg"></circle>
+                                        <circle cx="50" cy="50" r="45" class="fg" id="health-score-ring"></circle>
+                                    </svg>
+                                    <div class="score-value">
+                                        <span id="health-score-num">82</span>
+                                        <label>Optimal</label>
+                                    </div>
+                                </div>
+                                <div class="score-message">
+                                    <p>Your health score improved by 8% this week. Great job staying active!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Insight Banner -->
+                        <div class="insight-container" id="ai-insights-list">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Daily Progress -->
+                        <div class="progress-section">
+                            <div class="section-title">
+                                <h3>Daily Progress</h3>
+                                <span><span id="taken-count">2</span>/5 doses</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-fill" id="daily-med-progress" style="width: 40%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Medicine Adherence -->
+                        <div class="med-list-header">
+                            <h3>Today's Medicines</h3>
+                            <button class="text-btn" id="view-all-meds">View All</button>
+                        </div>
+                        <div class="horizontal-scroller" id="today-meds-list">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Health Stats Grid -->
+                        <div class="stats-grid">
+                            <div class="stat-card glass">
+                                <div class="stat-icon hr"><i class="fas fa-heartbeat"></i></div>
+                                <div class="stat-info">
+                                    <label>Heart Rate</label>
+                                    <span class="value"><span id="live-hr">72</span> <small>bpm</small></span>
+                                </div>
+                            </div>
+                            <div class="stat-card glass">
+                                <div class="stat-icon steps"><i class="fas fa-shoe-prints"></i></div>
+                                <div class="stat-info">
+                                    <label>Steps</label>
+                                    <span class="value">6,420</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gamification -->
+                        <div class="gamification-card glass">
+                            <div class="streak-box">
+                                <div class="fire-icon"><i class="fas fa-fire"></i></div>
+                                <div class="streak-info">
+                                    <span id="streak-days">12</span>
+                                    <label>Day Streak</label>
+                                </div>
+                            </div>
+                            <div class="badge-showcase">
+                                <div class="badge-item earned"><i class="fas fa-award"></i></div>
+                                <div class="badge-item earned"><i class="fas fa-bolt"></i></div>
+                                <div class="badge-item locked"><i class="fas fa-shield-heart"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Medicines List -->
+                <section id="meds-screen" class="screen">
+                    <div class="page-header">
+                        <h2>My Medicines</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search medicines...">
+                        </div>
+                    </div>
+                    <div class="scroll-content" id="full-meds-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </section>
+
+                <!-- Reports/Data -->
+                <section id="reports-screen" class="screen">
+                    <div class="page-header">
+                        <h2>Health Insights</h2>
+                    </div>
+                    <div class="scroll-content">
+                        <div class="chart-card glass">
+                            <h3>Weekly Adherence</h3>
+                            <div class="bar-chart" id="adherence-chart">
+                                <!-- Chart generated by JS -->
+                            </div>
+                        </div>
+                        <div class="data-logs">
+                            <h3>Recent Activity</h3>
+                            <div class="timeline" id="activity-timeline">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant Chat -->
+                <section id="ai-screen" class="screen">
+                    <div class="ai-chat-header">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ai-status">
+                            <h3>CareMate AI</h3>
+                            <p><span class="dot"></span> Online</p>
+                        </div>
+                    </div>
+                    <div class="chat-container" id="chat-messages">
+                        <div class="message ai">
+                            <div class="bubble">
+                                Hello! I'm your CareMate AI assistant. How can I help you today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Type a message...">
+                        <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <div class="ai-disclaimer">
+                        CareMate AI provides supportive info, not medical diagnosis. In emergency, call 911.
+                    </div>
+                </section>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-item active" data-screen="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <button class="nav-item" data-screen="meds">
+                    <i class="fas fa-pills"></i>
+                    <span>Meds</span>
+                </button>
+                <button class="nav-item scanner-btn" id="open-scanner">
+                    <div class="scanner-circle">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </button>
+                <button class="nav-item" data-screen="reports">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports</span>
+                </button>
+                <button class="nav-item" data-screen="ai">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>AI Lab</span>
+                </button>
+            </nav>
+
+            <!-- Floating Action Button -->
+            <button id="fab-add-med" class="fab"><i class="fas fa-plus"></i></button>
+        </main>
+
+        <!-- Modals -->
+        <div id="modal-container" class="modal-overlay hidden">
+            <!-- Add Medicine Modal -->
+            <div id="add-med-modal" class="modal glass hidden">
+                <div class="modal-header">
+                    <h3>Add Medicine</h3>
+                    <button class="close-modal"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-med-form">
+                        <div class="form-group">
+                            <label>Medicine Name</label>
+                            <input type="text" id="med-name" required placeholder="e.g. Paracetamol">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Dosage</label>
+                                <input type="text" id="med-dosage" required placeholder="500mg">
+                            </div>
+                            <div class="form-group">
+                                <label>Time</label>
+                                <input type="time" id="med-time" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Period</label>
+                            <select id="med-period">
+                                <option value="Morning">Morning</option>
+                                <option value="Afternoon">Afternoon</option>
+                                <option value="Evening">Evening</option>
+                                <option value="Night">Night</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Instructions</label>
+                            <textarea id="med-instructions" placeholder="e.g. After food"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Medicine</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Scanner Modal -->
+            <div id="scanner-modal" class="modal glass full-screen hidden">
+                <div class="scanner-ui">
+                    <div class="scanner-header">
+                        <button class="close-modal"><i class="fas fa-arrow-left"></i></button>
+                        <h3>Smart Health Scanner</h3>
+                    </div>
+                    <div class="scanner-viewport">
+                        <div class="scan-line"></div>
+                        <div class="corner tl"></div>
+                        <div class="corner tr"></div>
+                        <div class="corner bl"></div>
+                        <div class="corner br"></div>
+                        <div class="scanning-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="scanner-controls">
+                        <p>Center the device or report within the box</p>
+                        <button id="start-scan-btn" class="scan-trigger-btn">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div id="scan-results" class="hidden">
+                        <div class="result-card">
+                            <h4>Scan Complete</h4>
+                            <div class="result-data">
+                                <div class="r-item"><span>BP:</span> <strong id="scan-bp">148/92</strong></div>
+                                <div class="r-item"><span>Sugar:</span> <strong id="scan-sugar">180</strong></div>
+                            </div>
+                            <button id="import-scan-btn" class="btn btn-primary">Sync with Reports</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Modal -->
+            <div id="emergency-modal" class="modal glass hidden">
+                <div class="emergency-content">
+                    <div class="emergency-header">
+                        <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h2>Emergency Mode</h2>
+                    </div>
+                    <div class="emergency-vitals">
+                        <div class="e-vital">
+                            <label>Pulse</label>
+                            <span>108 <small>bpm</small></span>
+                        </div>
+                        <div class="e-vital">
+                            <label>Last Med</label>
+                            <span>Lisinopril</span>
+                        </div>
+                    </div>
+                    <div class="emergency-contacts">
+                        <h3>Contacting Family...</h3>
+                        <div class="contact-card">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Family" alt="Dad">
+                            <div class="c-info">
+                                <strong>Dad (John Doe)</strong>
+                                <span>+1 234 567 890</span>
+                            </div>
+                            <button class="call-btn"><i class="fas fa-phone"></i></button>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger close-modal" style="width:100%; margin-top: 20px;">Deactivate Alert</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/store.js" defer></script>
+    <script src="js/ai.js" defer></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>
