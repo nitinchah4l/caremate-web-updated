@@ -3,6 +3,7 @@ const Store = {
     state: {
         user: null,
         medicines: [],
+        appointments: [],
         healthData: {
             heartRate: [],
             steps: [],
@@ -28,6 +29,9 @@ const Store = {
             { id: 1, name: 'Lisinopril', dosage: '10mg', time: '08:00', period: 'Morning', instructions: 'Before food', status: 'Taken', date: new Date().toLocaleDateString() },
             { id: 2, name: 'Metformin', dosage: '500mg', time: '13:00', period: 'Afternoon', instructions: 'After food', status: 'Upcoming', date: new Date().toLocaleDateString() },
             { id: 3, name: 'Multivitamin', dosage: '1 Tab', time: '14:00', period: 'Afternoon', instructions: 'Daily', status: 'Upcoming', date: new Date().toLocaleDateString() }
+        ];
+        this.state.appointments = [
+            { id: 101, doctor: 'Dr. John Smith', specialty: 'Cardiologist', date: '2026-04-20', time: '17:00', notes: 'Regular heart checkup', status: 'Upcoming' }
         ];
         this.state.healthData.bp = [
             { value: '120/80', date: '2026-04-18', timestamp: Date.now() - 86400000 },
@@ -78,6 +82,23 @@ const Store = {
 
     deleteMed(id) {
         this.state.medicines = this.state.medicines.filter(m => m.id !== id);
+        this.save();
+    },
+
+    // Appointment Actions
+    addAppointment(apt) {
+        const newApt = {
+            ...apt,
+            id: Date.now(),
+            status: 'Upcoming'
+        };
+        this.state.appointments.push(newApt);
+        this.save();
+        return newApt;
+    },
+
+    deleteAppointment(id) {
+        this.state.appointments = this.state.appointments.filter(a => a.id !== id);
         this.save();
     },
 

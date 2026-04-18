@@ -34,18 +34,27 @@ const AI = {
         const score = this.calculateHealthScore();
         const insights = [];
 
-        const meds = Store.state.medicines;
         const missed = meds.filter(m => m.status === 'Missed').length;
-        const upcoming = meds.filter(m => m.status === 'Upcoming').length;
-        const bp = Store.state.healthData.bp;
-        const latestBP = bp[bp.length - 1];
+        const upcomingMeds = meds.filter(m => m.status === 'Upcoming').length;
+        const apts = Store.state.appointments;
+        const upcomingApts = apts.filter(a => a.status === 'Upcoming');
 
-        if (missed > 0) {
+        if (upcomingApts.length > 0) {
+            const next = upcomingApts[0];
+            insights.push({
+                type: 'info',
+                icon: 'fa-user-md',
+                title: 'Upcoming Appointment',
+                message: `You have an appointment with ${next.doctor} (${next.specialty}) on ${next.date}.`
+            });
+        }
+
+        if (missed > 0 && upcomingApts.length > 0) {
             insights.push({
                 type: 'risk',
-                icon: 'fa-clock',
-                title: 'Missed Dose Alert',
-                message: `You missed ${missed} dose(s) today. This may impact your health score efficiency.`
+                icon: 'fa-triangle-exclamation',
+                title: 'Medication Non-Adherence',
+                message: `You missed ${missed} doses and have a doctor visit coming up. Be prepared to discuss this.`
             });
         }
 
@@ -94,6 +103,15 @@ const AI = {
             const bp = Store.state.healthData.bp;
             const last = bp[bp.length - 1].value;
             return `Your last recorded Blood Pressure was ${last}. This is slightly elevated. I recommend monitoring it again in 4 hours.`;
+        }
+
+        if (query.includes('appointment') || query.includes('doctor')) {
+            const apts = Store.state.appointments.filter(a => a.status === 'Upcoming');
+            if (apts.length > 0) {
+                const next = apts[0];
+                return `Your next appointment is with ${next.doctor} on ${next.date} at ${next.time}. Note: ${next.notes || 'No specific notes'}.`;
+            }
+            return "You don't have any upcoming doctor appointments scheduled.";
         }
 
         if (query.includes('miss') || query.includes('dose') || query.includes('medicine')) {

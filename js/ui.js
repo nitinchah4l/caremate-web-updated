@@ -42,6 +42,11 @@ const UI = {
             adherenceChart: document.getElementById('adherence-chart'),
             timeline: document.getElementById('activity-timeline'),
             
+            // Appointments
+            aptList: document.getElementById('apt-list'),
+            dashNextApt: document.getElementById('dash-next-apt'),
+            dashNextAptTime: document.getElementById('dash-next-apt-time'),
+            
             // Chat
             chatMessages: document.getElementById('chat-messages'),
             chatInput: document.getElementById('chat-input'),
@@ -50,13 +55,16 @@ const UI = {
             // Modals
             modalContainer: document.getElementById('modal-container'),
             addMedModal: document.getElementById('add-med-modal'),
+            addAptModal: document.getElementById('add-apt-modal'),
             scannerModal: document.getElementById('scanner-modal'),
             emergencyModal: document.getElementById('emergency-modal'),
             
             // Scanner
             startScanBtn: document.getElementById('start-scan-btn'),
             scanResults: document.getElementById('scan-results'),
-            importScanBtn: document.getElementById('import-scan-btn')
+            importScanBtn: document.getElementById('import-scan-btn'),
+            scanMedName: document.getElementById('scan-med-name'),
+            scanMedDosage: document.getElementById('scan-med-dosage')
         };
     },
 
@@ -124,6 +132,26 @@ const UI = {
             this.showToast('Medicine added successfully');
         });
 
+        // Add Appointment Form
+        document.getElementById('add-apt-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const aptData = {
+                doctor: document.getElementById('apt-doc-name').value,
+                specialty: document.getElementById('apt-specialty').value,
+                date: document.getElementById('apt-date').value,
+                time: document.getElementById('apt-time').value,
+                notes: document.getElementById('apt-notes').value
+            };
+            Store.addAppointment(aptData);
+            this.closeModal();
+            this.updateAll();
+            this.showToast('Appointment scheduled');
+        });
+
+        document.getElementById('add-apt-trigger').addEventListener('click', () => {
+            this.openModal('add-apt');
+        });
+
         // Chat
         this.els.sendMsgBtn.addEventListener('click', () => this.handleSendMessage());
         this.els.chatInput.addEventListener('keypress', (e) => {
@@ -134,12 +162,21 @@ const UI = {
         document.getElementById('open-scanner').addEventListener('click', () => this.openModal('scanner'));
         this.els.startScanBtn.addEventListener('click', () => this.runScannerSim());
         this.els.importScanBtn.addEventListener('click', () => {
-            Store.addRecord('bp', '148/92');
-            Store.addRecord('sugar', 180);
+            const name = this.els.scanMedName.textContent;
+            const dosage = this.els.scanMedDosage.textContent;
+            
+            Store.addMedicine({
+                name: name,
+                dosage: dosage,
+                time: '09:00',
+                period: 'Morning',
+                instructions: 'Auto-scanned'
+            });
+
             this.closeModal();
             this.updateAll();
-            this.showToast('Health data imported from scan');
-            this.showScreen('home');
+            this.showToast(`${name} added to schedule`);
+            this.showScreen('meds');
         });
 
         // Emergency
@@ -149,11 +186,16 @@ const UI = {
     openModal(type) {
         this.els.modalContainer.classList.remove('hidden');
         this.els.addMedModal.classList.add('hidden');
+        this.els.addAptModal.classList.add('hidden');
         this.els.scannerModal.classList.add('hidden');
         this.els.emergencyModal.classList.add('hidden');
 
         if (type === 'add-med') this.els.addMedModal.classList.remove('hidden');
-        if (type === 'scanner') this.els.scannerModal.classList.remove('hidden');
+        if (type === 'add-apt') this.els.addAptModal.classList.remove('hidden');
+        if (type === 'scanner') {
+            this.els.scannerModal.classList.remove('hidden');
+            this.els.scanResults.classList.add('hidden');
+        }
         if (type === 'emergency') this.els.emergencyModal.classList.remove('hidden');
     },
 
@@ -164,6 +206,7 @@ const UI = {
     updateAll() {
         this.updateDashboard();
         this.updateMedsList();
+        this.updateAppointmentsList();
         this.updateReports();
         this.updateUserInfo();
     },
@@ -214,6 +257,17 @@ const UI = {
             </div>
         `).join('');
 
+        // Dashboard Appointment
+        const apts = Store.state.appointments.filter(a => a.status === 'Upcoming');
+        if (apts.length > 0) {
+            const next = apts[0];
+            this.els.dashNextApt.textContent = next.doctor;
+            this.els.dashNextAptTime.textContent = `${next.date} · ${next.time}`;
+        } else {
+            this.els.dashNextApt.textContent = 'No upcoming';
+            this.els.dashNextAptTime.textContent = 'Schedule now';
+        }
+
         this.els.streakDays.textContent = Store.state.streaks;
     },
 
@@ -246,6 +300,32 @@ const UI = {
     deleteMed(id) {
         if (confirm('Delete this medicine?')) {
             Store.deleteMed(id);
+            this.updateAll();
+        }
+    },
+
+    updateAppointmentsList() {
+        const apts = Store.state.appointments;
+        this.els.aptList.innerHTML = apts.map(apt => `
+            <div class="insight-card glass" style="border-left: 4px solid var(--success); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div style="width: 44px; height: 44px; background: rgba(0, 245, 160, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--success);">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0;">${apt.doctor}</h4>
+                        <p style="font-size: 13px; color: var(--text-main); margin: 2px 0;">${apt.specialty}</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">${apt.date} at ${apt.time}</p>
+                    </div>
+                </div>
+                <button onclick="UI.deleteApt(${apt.id})" style="background: none; border: none; color: var(--text-dim); font-size: 18px;"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        `).join('');
+    },
+
+    deleteApt(id) {
+        if (confirm('Cancel this appointment?')) {
+            Store.deleteAppointment(id);
             this.updateAll();
         }
     },
@@ -310,11 +390,25 @@ const UI = {
 
     runScannerSim() {
         this.els.startScanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        this.els.scanResults.classList.add('hidden');
+        
         setTimeout(() => {
             document.querySelector('.scanner-viewport').style.borderColor = 'var(--success)';
+            
+            // Randomly pick a medicine for simulation
+            const meds = [
+                { name: 'Paracetamol', dosage: '500mg' },
+                { name: 'Amoxicillin', dosage: '250mg' },
+                { name: 'Ibuprofen', dosage: '400mg' }
+            ];
+            const pick = meds[Math.floor(Math.random() * meds.length)];
+            
+            this.els.scanMedName.textContent = pick.name;
+            this.els.scanMedDosage.textContent = pick.dosage;
+            
             this.els.scanResults.classList.remove('hidden');
             this.els.startScanBtn.innerHTML = '<i class="fas fa-camera"></i>';
-        }, 3000);
+        }, 2500);
     },
 
     showToast(msg) {
