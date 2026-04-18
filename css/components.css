@@ -463,8 +463,108 @@
     color: var(--text-main);
 }
 
-#next-appointment-card small {
-    display: block;
+/* Vitals Chart */
+.vitals-chart {
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20px 0;
+    gap: 10px;
+}
+
+.v-bar-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 4px;
+    height: 100%;
+}
+
+.v-bar {
+    border-radius: 4px;
+    width: 100%;
+    transition: height 1s ease;
+}
+
+.v-bar.s { background: var(--primary); opacity: 0.6; } /* Sugar */
+.v-bar.b { background: var(--danger); opacity: 0.6; } /* BP */
+
+.v-bar-container.current .v-bar { opacity: 1; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+
+.chart-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 11px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Scanner Modes */
+.scanner-modes {
+    display: flex;
+    background: var(--bg-surface);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.mode-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mode-btn.active {
+    background: var(--primary);
+    color: var(--bg-deep);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.percent {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+/* AI Metadata */
+.risk-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.risk-badge.low { background: rgba(0, 245, 160, 0.1); color: var(--success); }
+.risk-badge.medium { background: rgba(249, 212, 35, 0.1); color: var(--warning); }
+.risk-badge.high { background: rgba(255, 65, 108, 0.1); color: var(--danger); }
+
+.rec-note {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 11px;
     color: var(--text-muted);
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rec-note i {
+    color: var(--warning);
 }

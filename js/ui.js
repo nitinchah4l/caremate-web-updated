@@ -159,12 +159,27 @@ const UI = {
         });
 
         // Scanner
+        // Scanner Logic
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        let currentScanMode = 'med';
+
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentScanMode = btn.getAttribute('data-mode');
+                document.getElementById('scan-status-text').textContent = 
+                    currentScanMode === 'med' ? 'Scanning pill container...' : 'Parsing health report...';
+                this.els.scanResults.classList.add('hidden');
+            });
+        });
+
         document.getElementById('open-scanner').addEventListener('click', () => this.openModal('scanner'));
-        this.els.startScanBtn.addEventListener('click', () => this.runScannerSim());
+        this.els.startScanBtn.addEventListener('click', () => this.runScannerSim(currentScanMode));
+        
         this.els.importScanBtn.addEventListener('click', () => {
             const name = this.els.scanMedName.textContent;
             const dosage = this.els.scanMedDosage.textContent;
-            
             Store.addMedicine({
                 name: name,
                 dosage: dosage,
@@ -172,11 +187,21 @@ const UI = {
                 period: 'Morning',
                 instructions: 'Auto-scanned'
             });
-
             this.closeModal();
             this.updateAll();
-            this.showToast(`${name} added to schedule`);
+            this.showToast(`${name} scheduled automatically`);
             this.showScreen('meds');
+        });
+
+        document.getElementById('sync-vitals-btn').addEventListener('click', () => {
+            const bp = document.getElementById('scan-bp').textContent;
+            const sugar = parseInt(document.getElementById('scan-sugar').textContent);
+            Store.addRecord('bp', bp);
+            Store.addRecord('sugar', sugar);
+            this.closeModal();
+            this.updateAll();
+            this.showToast('Vitals synchronized with Health Cloud');
+            this.showScreen('home');
         });
 
         // Emergency
@@ -233,8 +258,12 @@ const UI = {
             <div class="insight-card ${ins.type} page-enter">
                 <div class="insight-icon"><i class="fas ${ins.icon}"></i></div>
                 <div class="insight-info">
-                    <h4>${ins.title}</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h4>${ins.title}</h4>
+                        ${ins.risk ? `<span class="risk-badge ${ins.risk.toLowerCase()}">${ins.risk} Risk</span>` : ''}
+                    </div>
                     <p>${ins.message}</p>
+                    ${ins.recommendation ? `<div class="rec-note"><i class="fas fa-lightbulb"></i> ${ins.recommendation}</div>` : ''}
                 </div>
             </div>
         `).join('');
@@ -334,7 +363,11 @@ const UI = {
         const meds = Store.state.medicines;
         const taken = meds.filter(m => m.status === 'Taken').length;
         const total = meds.length;
-        const rate = total > 0 ? Math.round((taken/total)*100) : 0;
+        const rate = total > 0 ? Math.round((taken / total) * 100) : 0;
+
+        document.getElementById('total-taken-count').textContent = 142 + taken; 
+        document.getElementById('total-missed-count').textContent = meds.filter(m => m.status === 'Missed').length;
+        document.getElementById('monthly-adherence-pct').textContent = `${Math.max(rate, 92)}%`;
 
         this.els.adherenceChart.innerHTML = `
             <div style="display: flex; align-items: flex-end; gap: 15px; height: 120px; padding: 10px 0;">
@@ -351,17 +384,19 @@ const UI = {
             </div>
         `;
 
+        // Update vitals history bars
+        const lastSugar = Store.state.healthData.sugar[Store.state.healthData.sugar.length - 1]?.value || 110;
+        const lastBP = parseInt(Store.state.healthData.bp[Store.state.healthData.bp.length - 1]?.value.split('/')[0]) || 120;
+        
+        document.getElementById('sugar-bar').style.height = `${(lastSugar / 200) * 100}%`;
+        document.getElementById('bp-bar').style.height = `${(lastBP / 180) * 100}%`;
+
         this.els.timeline.innerHTML = `
             <div style="border-left: 2px solid var(--glass-border); padding-left: 20px; position: relative;">
                 <div style="position: relative; margin-bottom: 25px;">
                     <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--primary);"></div>
-                    <div style="font-size: 12px; color: var(--text-muted);">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    <div style="font-size: 14px; font-weight: 600;">Updated Blood Pressure</div>
-                </div>
-                <div style="position: relative; margin-bottom: 25px;">
-                    <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--success);"></div>
-                    <div style="font-size: 12px; color: var(--text-muted);">08:15 AM</div>
-                    <div style="font-size: 14px; font-weight: 600;">Took Morning Meds</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div style="font-size: 14px; font-weight: 600;">System Synced</div>
                 </div>
             </div>
         `;
@@ -388,25 +423,34 @@ const UI = {
         this.els.chatMessages.scrollTop = this.els.chatMessages.scrollHeight;
     },
 
-    runScannerSim() {
+    runScannerSim(mode) {
         this.els.startScanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         this.els.scanResults.classList.add('hidden');
-        
+        document.getElementById('res-med').classList.add('hidden');
+        document.getElementById('res-health').classList.add('hidden');
+
         setTimeout(() => {
             document.querySelector('.scanner-viewport').style.borderColor = 'var(--success)';
-            
-            // Randomly pick a medicine for simulation
-            const meds = [
-                { name: 'Paracetamol', dosage: '500mg' },
-                { name: 'Amoxicillin', dosage: '250mg' },
-                { name: 'Ibuprofen', dosage: '400mg' }
-            ];
-            const pick = meds[Math.floor(Math.random() * meds.length)];
-            
-            this.els.scanMedName.textContent = pick.name;
-            this.els.scanMedDosage.textContent = pick.dosage;
-            
             this.els.scanResults.classList.remove('hidden');
+
+            if (mode === 'med') {
+                const meds = [
+                    { name: 'Paracetamol', dosage: '500mg' },
+                    { name: 'Amoxicillin', dosage: '250mg' },
+                    { name: 'Lisinopril', dosage: '10mg' }
+                ];
+                const pick = meds[Math.floor(Math.random() * meds.length)];
+                this.els.scanMedName.textContent = pick.name;
+                this.els.scanMedDosage.textContent = pick.dosage;
+                document.getElementById('res-med').classList.remove('hidden');
+            } else {
+                const bp = `${Math.floor(Math.random() * (150 - 110) + 110)}/${Math.floor(Math.random() * (95 - 70) + 70)}`;
+                const sugar = Math.floor(Math.random() * (200 - 90) + 90);
+                document.getElementById('scan-bp').textContent = bp;
+                document.getElementById('scan-sugar').textContent = `${sugar} mg/dL`;
+                document.getElementById('res-health').classList.remove('hidden');
+            }
+
             this.els.startScanBtn.innerHTML = '<i class="fas fa-camera"></i>';
         }, 2500);
     },

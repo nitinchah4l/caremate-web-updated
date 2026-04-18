@@ -45,7 +45,9 @@ const AI = {
                 type: 'info',
                 icon: 'fa-user-md',
                 title: 'Upcoming Appointment',
-                message: `You have an appointment with ${next.doctor} (${next.specialty}) on ${next.date}.`
+                message: `You have an appointment with ${next.doctor} (${next.specialty}).`,
+                risk: 'Low',
+                recommendation: 'Check your medicine stock before the visit.'
             });
         }
 
@@ -53,8 +55,10 @@ const AI = {
             insights.push({
                 type: 'risk',
                 icon: 'fa-triangle-exclamation',
-                title: 'Medication Non-Adherence',
-                message: `You missed ${missed} doses and have a doctor visit coming up. Be prepared to discuss this.`
+                title: 'Medication Risk',
+                message: `You missed ${missed} doses and have a doctor visit coming up.`,
+                risk: 'Medium',
+                recommendation: 'Update your medication log for accurate doctor feedback.'
             });
         }
 
@@ -63,7 +67,9 @@ const AI = {
                 type: 'risk',
                 icon: 'fa-exclamation-triangle',
                 title: 'Health Risk Warning',
-                message: 'Your health metrics indicate a rising risk level. Please consult your physician.'
+                message: 'Your health metrics indicate a rising risk level.',
+                risk: 'High',
+                recommendation: 'Increase your monitoring frequency and watch salt intake.'
             });
         }
 
